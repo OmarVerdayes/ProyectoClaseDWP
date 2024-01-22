@@ -5,17 +5,14 @@ import Vue from "vue";
 Vue.use(VueRouter);
 
 const routes = [
+    
     {
-        path: "/",
-        redirect: "/inicio"
+        path: "*",
+        component: () => import("../views/ErrorPages/Error404.vue"),
     },
     {
         path: "/",
-        component: {
-            render(c) {
-                return c("router-view")
-            }
-        },
+        component: () => import("../components/ContenidoInicio.vue"),
         children: [
             {
                 path: "/inicio",
@@ -26,6 +23,10 @@ const routes = [
                 path: "/main",
                 name: "main",
                 component: () => import("../components/Main.vue")
+            },{
+                path: "/formulario",
+                name: "formulario",
+                component: () => import("../components/Formulario.vue")
             },
             {
                 path: "/tercero",
