@@ -1,141 +1,127 @@
 <template>
-    <div>
-        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-            <b-form-group id="input-group-1" label="Ingresa tu email:" label-for="email">
-                <b-form-input id="email" v-model="form.email" type="email" placeholder="ejemplo@email.com"
-                    required></b-form-input>
-            </b-form-group>
+  <div class="container">
+    <h1>Formulario</h1>
+    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
 
-            <b-form-group id="input-group-2" label="Ingresa tu nombre :" label-for="nombre">
-                <b-form-input id="nombre" v-model="form.nombre" placeholder="Nombre" required></b-form-input>
-            </b-form-group>
+      <b-form-group id="input-group-1" label="Datos Personales" label-for="input-1">
+        <b-form-input id="input-1" v-model="form.name" type="text" placeholder="Ingresa tu nombre" required />
+        <b-form-input id="input-2" v-model="form.apellido_p" type="text" placeholder="Ingresa tu apellido paterno"
+          required />
+        <b-form-input id="input-3" v-model="form.apellido_m" type="text" placeholder="Ingresa tu apellido materno" />
+      </b-form-group>
 
-            <b-form-group id="input-group-3" label="Ingresa tu apellido paterno:" label-for="apellidoP">
-                <b-form-input id="apellidoP" v-model="form.apellidoP" placeholder="Apellido Paterno"
-                    required></b-form-input>
-            </b-form-group>
-            <b-form-group id="input-group-4" label="Ingresa tu apellido materno :" label-for="apellidoM">
-                <b-form-input id="apellidoM" v-model="form.apellidoM" placeholder="Apellido materno"></b-form-input>
-            </b-form-group>
-            <b-form-group id="input-group-5" label="Ingresa tu Direccion:" label-for="apellidoM">
-                <b-form-input id="apellidoM" v-model="form.direccion"
-                    placeholder="Av. Universidad Tecnológica 1, Palo Escrito, 62765 Emiliano Zapata, Mor."
-                    required></b-form-input>
-            </b-form-group>
-            <b-form-group id="input-group-6" label="Ingresa tu fecha de nacimiento:" label-for="fechaN">
-                <b-form-datepicker id="fechaN" v-model="form.fechaN" placeholder="27/04/2003" :editable="true"
-                    @input="validateDate"></b-form-datepicker>
-                <small class="text-danger">{{ dateError }}</small>
-            </b-form-group>
-            <b-form-group id="input-group-7" label="Ingresa tu numero telefonico:" label-for="numeroT">
-                <b-form-input id="numeroT" v-model="form.numeroT" placeholder="7777951328" type="tel"
-                    @input="validatePhoneNumber"></b-form-input>
-                <small class="text-danger">{{ phoneError }}</small>
-            </b-form-group>
-            <b-form-group id="input-group-8" label="Selecciona un archivo:" label-for="archivo">
-                <b-form-file id="archivo" v-model="form.archivo" :state="fileIsValid() ? null : false"
-                    :max-size="3 * 1024 * 1024" accept=".png"></b-form-file>
-                <small class="text-danger">{{ fileError }}</small>
-            </b-form-group>
-            <b-button type="submit" variant="primary">Submit</b-button>
-            <b-button type="reset" variant="danger">Reset</b-button>
-        </b-form>
-        <b-card class="mt-3" header="Form Data Result">
-            <pre class="m-0">{{ form }}</pre>
-        </b-card>
-    </div>
+      <b-form-group id="input-group-2" label="Dirección" label-for="input-4">
+        <b-form-input id="input-4" v-model="form.cp" type="number" placeholder="Ingresa tu CP" required />
+        <b-form-input id="input-5" v-model="form.calle" type="text" placeholder="Ingresa tu Calle" required />
+        <b-form-input id="input-6" v-model="form.numero" type="number" placeholder="Ingresa tu Numero" required />
+        <b-form-input id="input-7" v-model="form.ciudad" type="text" placeholder="Ingresa tu ciudad " required />
+      </b-form-group>
+
+      <b-form-group id="input-group-3" label="Fecha de Nacimiento" label-for="input-8">
+        <b-form-datepicker id="input-8" v-model="form.fechaNacimiento" :max="maxDate" required></b-form-datepicker>
+      </b-form-group>
+
+      <b-form-group id="input-group-4" label="Contacto" label-for="input-9">
+        <b-form-input id="input-9" v-model="form.correo" type="email" placeholder="Ingresa tu correo electronico"
+          required />
+        <b-form-input id="input-10" v-model="form.telefono" type="number" placeholder="Ingresa tu número telefonico"
+          required />
+        <label for="">Fotografia</label>
+        <input type="file" @change="onFile" multiple>
+      </b-form-group>
+
+      <b-button type="submit" variant="primary">Enviar</b-button>
+    </b-form>
+
+    <div v-if="formError" class="alert alert-danger">{{ formError }}</div>
+
+  </div>
 </template>
-  
+
 <script>
 export default {
-    data() {
-        return {
-            form: {
-            },
-            show: true
-        }
-    },
-    methods: {
-        onSubmit(event) {
-            event.preventDefault();
-            if (!this.dateIsValid()) {
-                this.dateError = 'La fecha no cumple con los requisitos de edad mínima y máxima.';
-                return;
-            } else {
-                this.dateError = '';
-            }
-
-            if (!this.phoneIsValid()) {
-                this.phoneError = 'El número de teléfono debe tener exactamente 10 dígitos.';
-                return;
-            } else {
-                this.phoneError = '';
-            }
-
-            if (!this.fileIsValid()) {
-                this.fileError = 'El tamaño del archivo no puede ser mayor a 3MB.';
-                return;
-            } else {
-                this.fileError = '';
-            }
-
-            alert(JSON.stringify(this.form));
-        },
-        onReset(event) {
-            event.preventDefault();
-            // Reset our form values
-            this.form.email = '';
-            this.form.name = '';
-            // Trick to reset/clear native browser form validation state
-            this.show = false;
-            this.$nextTick(() => {
-                this.show = true;
-            });
-        },
-        validateDate() {
-            if (!this.dateIsValid()) {
-                this.dateError = 'La fecha no cumple con los requisitos de edad mínima y máxima.';
-            } else {
-                this.dateError = '';
-            }
-        },
-        validatePhoneNumber() {
-            if (!this.phoneIsValid()) {
-                this.phoneError = 'El número de teléfono debe tener exactamente 10 dígitos.';
-            } else {
-                this.phoneError = '';
-            }
-        },
-        fileIsValid() {
-            // Validar que el tamaño del archivo no sea mayor a 3MB
-            if (!this.form.archivo) {
-                return false;
-            }
-
-            return this.form.archivo.size <= 3 * 1024 * 1024; // 3MB
-        },
-        dateIsValid() {
-            // Validar que la fecha cumple con los requisitos de edad mínima (18 años)
-            if (!this.form.fechaN) {
-                return false;
-            }
-
-            const currentDate = new Date();
-            const selectedDate = new Date(this.form.fechaN);
-
-            // Calcular la edad mínima permitida (18 años)
-            const minDate = new Date();
-            minDate.setFullYear(currentDate.getFullYear() - 18);
-
-            return selectedDate <= currentDate && selectedDate >= minDate;
-        },
-        phoneIsValid() {
-            // Validar que el número de teléfono tenga exactamente 10 dígitos
-            const phoneNumber = this.form.numeroT.replace(/\D/g, ''); // Eliminar caracteres no numéricos
-            return phoneNumber.length === 10;
-        }
+  data() {
+    return {
+      form: {
+        name: '',
+        apellido_p: '',
+        apellido_m: '',
+        cp: '',
+        calle: '',
+        numero: '',
+        ciudad: '',
+        fechaNacimiento: null,
+        correo: '',
+        telefono: '',
+        foto: '',
+        checked: []
+      },
+      maxDate: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
+      show: true,
+      formError: ''
     }
-};
+  },
+  methods: {
+    onSubmit(event) {
+      event.preventDefault();
+
+      if (!this.validateForm()) {
+        return;
+      }
+
+      alert('Formulario enviado correctamente');
+      this.resetForm();
+    },
+    onReset(event) {
+      event.preventDefault();
+      this.resetForm();
+    },
+    onFile(event) {
+      const file = event.target.files[0];
+      if (file.size > 3 * 1024 * 1024) {
+        this.formError = 'El tamaño de la fotografa debe ser menor a 3 MB';
+      } else {
+        this.formError = '';
+      }
+    },
+    validateForm() {
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(this.form.correo)) {
+        this.formError = 'Ingresa un crreo electronico valido';
+        return false;
+      }
+
+      if (this.form.telefono.length !== 10) {
+        this.formError = 'El numero telefonico debe tener 10 caracteres';
+        return false;
+      }
+
+      this.formError = '';
+      return true;
+    },
+    previewFiles(event) {
+      console.log(event.target.files);
+    },
+    resetForm() {
+      this.form = {
+        name: '',
+        apellido_p: '',
+        apellido_m: '',
+        cp: '',
+        calle: '',
+        numero: '',
+        ciudad: '',
+        fechaNacimiento: null,
+        correo: '',
+        telefono: '',
+        foto: '',
+        checked: []
+      };
+      this.formError = '';
+    }
+  }
+}
 </script>
-  
+
 <style></style>
